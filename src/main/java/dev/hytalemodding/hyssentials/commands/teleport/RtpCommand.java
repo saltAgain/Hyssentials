@@ -24,9 +24,12 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RtpCommand extends AbstractPlayerCommand {
     public static final String RTP = "rtp";
+    private static final Logger LOGGER = Logger.getLogger(RtpCommand.class.getName());
     private static final int DEFAULT_MIN_RANGE = 100;
     private static final int DEFAULT_MAX_RANGE = 5000;
     private static final int MAX_ATTEMPTS = 15;
@@ -69,7 +72,7 @@ public class RtpCommand extends AbstractPlayerCommand {
 
     @Override
     protected void execute(@Nonnull CommandContext context, @Nonnull Store<EntityStore> store,
-                          @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
+                           @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
         UUID playerUuid = playerRef.getUuid();
         CommandSettings settings = rankManager.getEffectiveSettings(playerRef, RTP);
         boolean bypassCooldown = Permissions.canBypassCooldown(playerRef);
@@ -97,6 +100,7 @@ public class RtpCommand extends AbstractPlayerCommand {
             String displayName = String.format("random location (%.0f, %.0f, %.0f)", location.x(), location.y(), location.z());
             warmupManager.startWarmup(playerRef, store, ref, world, location, warmupSeconds, RTP, displayName, null);
         }).exceptionally(ex -> {
+            LOGGER.log(Level.SEVERE, "RTP failed unexpectedly", ex);
             playerRef.sendMessage(ChatUtil.parse(Messages.ERROR_RTP_FAILED));
             return null;
         });
@@ -125,6 +129,7 @@ public class RtpCommand extends AbstractPlayerCommand {
             LocationData location = new LocationData(world.getName(), x + 0.5, safeY + 1.0, z + 0.5, 0, 0);
             return CompletableFuture.completedFuture(location);
         }).exceptionally(ex -> {
+            LOGGER.log(Level.WARNING, "RTP attempt " + attempt + " failed at chunk (" + x + ", " + z + ")", ex);
             return null;
         }).thenCompose(result -> {
             if (result == null && attempt < MAX_ATTEMPTS - 1) {
@@ -149,9 +154,10 @@ public class RtpCommand extends AbstractPlayerCommand {
             int blockAbove = chunk.getBlock(localX, y + 1, localZ);
 
             if (blockBelow != 0 && blockAt == 0 && blockAbove == 0) {
-                int fluidAtFeet = isFluid(localX, y, localZ, chunk.getWorld().getChunkStore());
-                int fluidAtHead = isFluid(localX, y + 1, localZ, chunk.getWorld().getChunkStore());
-                int fluidBelow = isFluid(localX, y - 1, localZ, chunk.getWorld().getChunkStore());
+                // FIX: pass world coordinates, not local coordinates
+                int fluidAtFeet = getFluidId(worldX, y, worldZ, chunk.getWorld().getChunkStore());
+                int fluidAtHead = getFluidId(worldX, y + 1, worldZ, chunk.getWorld().getChunkStore());
+                int fluidBelow = getFluidId(worldX, y - 1, worldZ, chunk.getWorld().getChunkStore());
 
                 if (fluidAtFeet != 0 || fluidAtHead != 0 || fluidBelow != 0) {
                     continue;
@@ -175,13 +181,23 @@ public class RtpCommand extends AbstractPlayerCommand {
         return null;
     }
 
-    private Integer isFluid(int x, int y, int z, ChunkStore chunkStore) {
+    // FIX: renamed for clarity, added null safety to prevent silent NPEs
+    private int getFluidId(int x, int y, int z, ChunkStore chunkStore) {
         int chunkX = ChunkUtil.chunkCoordinate(x);
         int sectionY = ChunkUtil.indexSection(y);
         int chunkZ = ChunkUtil.chunkCoordinate(z);
         int blockIndex = ChunkUtil.indexBlock(x, y, z);
+
         Ref<ChunkStore> sectionRef = chunkStore.getChunkSectionReference(chunkX, sectionY, chunkZ);
+        if (sectionRef == null) {
+            return 0;
+        }
+
         FluidSection fluidSection = chunkStore.getStore().getComponent(sectionRef, FluidSection.getComponentType());
+        if (fluidSection == null) {
+            return 0;
+        }
+
         return fluidSection.getFluidId(blockIndex);
     }
 }
