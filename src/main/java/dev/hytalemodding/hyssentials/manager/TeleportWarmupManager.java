@@ -2,10 +2,9 @@ package dev.hytalemodding.hyssentials.manager;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
@@ -75,7 +74,7 @@ public class TeleportWarmupManager {
             return;
         }
 
-        Vector3d startPos = transform.getPosition().clone();
+        Vector3d startPos = transform.getPosition();
         String destName = displayName != null ? displayName : String.format("%.1f, %.1f, %.1f", destination.x(), destination.y(), destination.z());
 
         playerRef.sendMessage(ChatUtil.parse(Messages.INFO_WARMUP_STARTED, destName, warmupSeconds));
@@ -101,7 +100,7 @@ public class TeleportWarmupManager {
                 TransformComponent currentTransform = store.getComponent(ref, TransformComponent.getComponentType());
                 if (currentTransform != null) {
                     Vector3d currentPos = currentTransform.getPosition();
-                    double distance = startPos.distanceTo(currentPos);
+                    double distance = startPos.distance(currentPos);
 
                     if (distance > MOVEMENT_THRESHOLD) {
                         playerRef.sendMessage(ChatUtil.parse(Messages.INFO_WARMUP_CANCELLED));
@@ -133,7 +132,7 @@ public class TeleportWarmupManager {
                 TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
                 if (transform != null) {
                     Vector3d currentPos = transform.getPosition();
-                    double distance = startPos.distanceTo(currentPos);
+                    double distance = startPos.distance(currentPos);
 
                     if (distance > MOVEMENT_THRESHOLD) {
                         cancelWarmup(playerUuid, true);
@@ -166,12 +165,12 @@ public class TeleportWarmupManager {
             TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
             HeadRotation headRotation = store.getComponent(ref, HeadRotation.getComponentType());
             if (transform != null) {
-                Vector3d currentPos = transform.getPosition().clone();
-                Vector3f currentRot = headRotation != null ? headRotation.getRotation().clone() : new Vector3f(0, 0, 0);
+                Vector3d currentPos = transform.getPosition();
+                Rotation3f currentRot = headRotation != null ? headRotation.getRotation() : new Rotation3f(0, 0, 0);
                 backManager.saveLocation(playerUuid, LocationData.from(currentWorld.getName(), currentPos, currentRot));
             }
-            Teleport teleport = new Teleport(finalWorld, destination.toPosition(), destination.toBodyRotation())
-                    .setHeadRotation(destination.toHeadRotation());
+            Teleport teleport = new Teleport(finalWorld, destination.toPosition(), new Rotation3f(destination.pitch(), destination.yaw(), 0))
+                    .setHeadRotation(new Rotation3f(destination.pitch(), destination.yaw(), 0));
             store.addComponent(ref, Teleport.getComponentType(), teleport);
 
             cooldownManager.setCooldown(playerUuid, commandType);

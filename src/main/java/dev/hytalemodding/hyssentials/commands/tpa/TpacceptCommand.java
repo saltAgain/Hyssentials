@@ -2,8 +2,8 @@ package dev.hytalemodding.hyssentials.commands.tpa;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
@@ -71,12 +71,12 @@ public class TpacceptCommand extends AbstractPlayerCommand {
                 context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
                 return;
             }
-            Vector3d targetPos = targetTransform.getPosition().clone();
-            Vector3f targetRot = targetHeadRot != null ? targetHeadRot.getRotation().clone() : new Vector3f(0, 0, 0);
+            Vector3d targetPos = targetTransform.getPosition();
+            Rotation3f targetRot = targetHeadRot != null ? targetHeadRot.getRotation().clone() : new Rotation3f(0, 0, 0);
             if (world != senderWorld) {
 
             }
-            LocationData destination = new LocationData(world.getName(), targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetRot.getPitch(), targetRot.getYaw());
+            LocationData destination = new LocationData(world.getName(), targetPos.x, targetPos.y, targetPos.z, targetRot.pitch(), targetRot.yaw());
 
             TpaSettings senderSettings = rankManager.getEffectiveTpaSettings(senderPlayer);
             warmupManager.startWarmup(senderPlayer, senderStore, senderRef, senderWorld, destination, senderSettings.getWarmupSeconds(), CooldownManager.TPA, playerRef.getUsername(), null);
@@ -88,9 +88,9 @@ public class TpacceptCommand extends AbstractPlayerCommand {
                 context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_TARGET_POSITION));
                 return;
             }
-            Vector3d senderPos = senderTransform.getPosition().clone();
-            Vector3f senderRot = senderHeadRot != null ? senderHeadRot.getRotation().clone() : new Vector3f(0, 0, 0);
-            LocationData destination = new LocationData(senderWorld.getName(), senderPos.getX(), senderPos.getY(), senderPos.getZ(), senderRot.getPitch(), senderRot.getYaw());
+            Vector3d senderPos = senderTransform.getPosition();
+            Rotation3f senderRot = senderHeadRot != null ? senderHeadRot.getRotation().clone() : new Rotation3f(0, 0, 0);
+            LocationData destination = new LocationData(senderWorld.getName(), senderPos.x, senderPos.y, senderPos.z, senderRot.pitch(), senderRot.yaw());;
 
             warmupManager.startWarmup(playerRef, store, ref, world, destination, settings.getWarmupSeconds(), CooldownManager.TPA, senderPlayer.getUsername(), null);
             senderPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_TPA_ACCEPTED_NOTIFY, playerRef.getUsername()));

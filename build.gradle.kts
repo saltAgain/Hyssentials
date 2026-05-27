@@ -4,4 +4,7 @@ repositories {
 
 dependencies {
     compileOnly(files("libs/ChatCustomization-1.1.1.jar"))
+    compileOnly(fileTree("libs") {
+        include("*.jar")
+    })
 }

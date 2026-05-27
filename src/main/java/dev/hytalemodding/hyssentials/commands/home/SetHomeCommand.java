@@ -2,8 +2,8 @@ package dev.hytalemodding.hyssentials.commands.home;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
@@ -51,13 +51,13 @@ public class SetHomeCommand extends AbstractPlayerCommand {
             return;
         }
         HeadRotation headRotation = store.getComponent(ref, HeadRotation.getComponentType());
-        Vector3f rotation = headRotation != null ? headRotation.getRotation() : new Vector3f(0, 0, 0);
+        Rotation3f rotation = headRotation != null ? headRotation.getRotation() : new Rotation3f(0, 0, 0);
         Vector3d position = transform.getPosition();
         int maxHomes = rankManager.getEffectiveMaxHomes(playerRef);
         boolean success = homeManager.setHome(playerUuid, name, world, position, rotation, maxHomes);
         if (success) {
             context.sendMessage(ChatUtil.parse(Messages.SUCCESS_HOME_SET,
-                name, position.getX(), position.getY(), position.getZ(), world.getName()));
+                name, position.x, position.y, position.z, world.getName()));
         } else {
             context.sendMessage(ChatUtil.parse(Messages.ERROR_MAX_HOMES_REACHED, maxHomes));
         }

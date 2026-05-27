@@ -1,7 +1,7 @@
 package dev.hytalemodding.hyssentials.manager;
 
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
 import com.hypixel.hytale.server.core.universe.world.World;
 import dev.hytalemodding.hyssentials.data.LocationData;
 import java.util.Collections;
@@ -21,7 +21,7 @@ public class WarpManager {
     }
 
     public void setWarp(@Nonnull String name, @Nonnull World world,
-                        @Nonnull Vector3d position, @Nonnull Vector3f rotation) {
+                        @Nonnull Vector3d position, @Nonnull Rotation3f rotation) {
         warps.put(name.toLowerCase(), LocationData.from(world.getName(), position, rotation));
         dataManager.saveWarps(warps);
     }

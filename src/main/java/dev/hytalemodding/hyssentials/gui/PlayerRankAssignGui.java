@@ -56,7 +56,7 @@ public class PlayerRankAssignGui extends InteractiveCustomUIPage<PlayerRankAssig
     private void buildPlayerList(UICommandBuilder cmd, UIEventBuilder events, Store<EntityStore> store) {
         cmd.clear("#PlayerList");
 
-        List<PlayerRef> allPlayers = Universe.get().getPlayers();
+        Collection<PlayerRef> allPlayers = Universe.get().getPlayers();
         visiblePlayers.clear();
 
         for (PlayerRef player : allPlayers) {

@@ -2,9 +2,10 @@ package dev.hytalemodding.hyssentials.commands.spawn;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.math.vector.Transform;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
@@ -42,10 +43,15 @@ public class SetSpawnCommand extends AbstractPlayerCommand {
             return;
         }
 
-        Vector3d position = transformComponent.getPosition().clone();
+        Vector3d position = null;
+        try {
+            position = (Vector3d) transformComponent.getPosition().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
 
         HeadRotation headRotation = store.getComponent(ref, HeadRotation.getComponentType());
-        Vector3f rotation = headRotation != null ? headRotation.getRotation() : Vector3f.FORWARD;
+        Rotation3f rotation = headRotation != null ? headRotation.getRotation() : new Rotation3f(0,0,0);
 
         Transform transform = new Transform(position, rotation);
         WorldConfig worldConfig = world.getWorldConfig();
@@ -53,12 +59,12 @@ public class SetSpawnCommand extends AbstractPlayerCommand {
         worldConfig.markChanged();
 
         context.sendMessage(ChatUtil.parse(Messages.SUCCESS_SPAWN_SET,
-            DECIMAL.format(position.getX()),
-            DECIMAL.format(position.getY()),
-            DECIMAL.format(position.getZ()),
-            DECIMAL.format(rotation.getX()),
-            DECIMAL.format(rotation.getY()),
-            DECIMAL.format(rotation.getZ())
+            DECIMAL.format(position.x),
+            DECIMAL.format(position.y),
+            DECIMAL.format(position.z),
+            DECIMAL.format(rotation.x),
+            DECIMAL.format(rotation.y),
+            DECIMAL.format(rotation.z)
         ));
     }
 }

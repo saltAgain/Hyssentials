@@ -6,8 +6,9 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefChangeSystem;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
@@ -51,7 +52,7 @@ public class PlayerDeathBackSystem extends RefChangeSystem<EntityStore, DeathCom
         }
         HeadRotation headRotation = commandBuffer.getComponent(ref, HeadRotation.getComponentType());
         Vector3d position = transform.getPosition();
-        Vector3f rotation = headRotation != null ? headRotation.getRotation() : new Vector3f(0, 0, 0);
+        Rotation3f rotation = headRotation != null ? headRotation.getRotation().clone() : new Rotation3f(0, 0, 0);
         World world = commandBuffer.getExternalData().getWorld();
         backManager.saveLocation(playerRef.getUuid(), LocationData.from(world.getName(), position, rotation));
     }

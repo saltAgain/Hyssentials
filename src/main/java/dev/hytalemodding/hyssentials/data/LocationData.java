@@ -1,7 +1,8 @@
 package dev.hytalemodding.hyssentials.data;
 
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 
 public record LocationData(
@@ -34,14 +35,14 @@ public record LocationData(
         return new Vector3f(pitch, yaw, 0.0f);
     }
 
-    public static LocationData from(String worldName, Vector3d position, Vector3f rotation) {
+    public static LocationData from(String worldName, Vector3d position, Rotation3f rotation) {
         return new LocationData(
             worldName,
-            position.getX(),
-            position.getY(),
-            position.getZ(),
-            rotation.getPitch(),
-            rotation.getYaw()
+            position.x,
+              position.y(),
+            position.z(),
+            rotation.pitch(),
+            rotation.yaw()
         );
     }
 }

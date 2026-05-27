@@ -2,8 +2,9 @@ package dev.hytalemodding.hyssentials.commands.teleport;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
@@ -60,20 +61,31 @@ public class TphereCommand extends AbstractPlayerCommand {
             context.sendMessage(ChatUtil.parse(Messages.ERROR_CANNOT_GET_POSITION));
             return;
         }
-        Vector3d myPos = myTransform.getPosition().clone();
-        Vector3f myRot = myHeadRot != null ? myHeadRot.getRotation().clone() : new Vector3f(0, 0, 0);
+        Vector3d myPos = null;
+        try {
+            myPos = (Vector3d) myTransform.getPosition().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        Rotation3f myRot = myHeadRot != null ? myHeadRot.getRotation().clone() : new Rotation3f(0, 0, 0);
         // Get body rotation for the teleport
-        Vector3f myBodyRot = myTransform.getRotation().clone();
+        Rotation3f myBodyRot = myTransform.getRotation().clone();
+        Vector3d finalMyPos = myPos;
         targetWorld.execute(() -> {
             TransformComponent targetTransform = targetStore.getComponent(targetRef, TransformComponent.getComponentType());
             HeadRotation targetHeadRot = targetStore.getComponent(targetRef, HeadRotation.getComponentType());
             if (targetTransform != null) {
-                Vector3d targetPos = targetTransform.getPosition().clone();
-                Vector3f targetRot = targetHeadRot != null ? targetHeadRot.getRotation().clone() : new Vector3f(0, 0, 0);
+                Vector3d targetPos = null;
+                try {
+                    targetPos = (Vector3d) targetTransform.getPosition().clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
+                Rotation3f targetRot = targetHeadRot != null ? targetHeadRot.getRotation().clone() : new Rotation3f(0, 0, 0);
                 backManager.saveLocation(targetPlayer.getUuid(), LocationData.from(targetWorld.getName(), targetPos, targetRot));
             }
             // Use proper body and head rotation like vanilla Hytale
-            Teleport teleport = new Teleport(world, myPos, myBodyRot)
+            Teleport teleport = new Teleport(world, finalMyPos, myBodyRot)
                 .setHeadRotation(myRot);
             targetStore.addComponent(targetRef, Teleport.getComponentType(), teleport);
             targetPlayer.sendMessage(ChatUtil.parse(Messages.SUCCESS_PLAYER_TELEPORTED_TO_YOU, playerRef.getUsername()));

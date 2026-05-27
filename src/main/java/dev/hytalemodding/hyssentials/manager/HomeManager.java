@@ -1,7 +1,8 @@
 package dev.hytalemodding.hyssentials.manager;
 
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import dev.hytalemodding.hyssentials.data.LocationData;
@@ -25,7 +26,7 @@ public class HomeManager {
     }
 
     public boolean setHome(@Nonnull UUID playerUuid, @Nonnull String name, @Nonnull World world,
-                          @Nonnull Vector3d position, @Nonnull Vector3f rotation, int effectiveMaxHomes) {
+                           @Nonnull Vector3d position, @Nonnull Rotation3f rotation, int effectiveMaxHomes) {
         Map<String, LocationData> homes = playerHomes.computeIfAbsent(playerUuid, k -> new ConcurrentHashMap<>());
         String lowerName = name.toLowerCase();
         if (!homes.containsKey(lowerName) && homes.size() >= effectiveMaxHomes) {

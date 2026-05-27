@@ -2,9 +2,10 @@ package dev.hytalemodding.hyssentials.commands.spawn;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.math.vector.Transform;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -61,8 +62,8 @@ public class SpawnCommand extends AbstractPlayerCommand {
         ISpawnProvider spawnProvider = world.getWorldConfig().getSpawnProvider();
         Transform spawn = spawnProvider.getSpawnPoint(world, playerUuid);
         Vector3d position = spawn.getPosition();
-        Vector3f rotation = spawn.getRotation();
-        LocationData spawnLocation = new LocationData(world.getName(), position.getX(), position.getY(), position.getZ(), rotation.getPitch(), rotation.getYaw());
+        Rotation3f rotation = spawn.getRotation();
+        LocationData spawnLocation = new LocationData(world.getName(), position.x, position.y, position.z, rotation.pitch(), rotation.yaw());
 
         int warmupSeconds = bypassCooldown ? 0 : settings.getWarmupSeconds();
         warmupManager.startWarmup(playerRef, store, ref, world, spawnLocation, warmupSeconds, CooldownManager.SPAWN, "spawn", null);
