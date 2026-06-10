@@ -1,18 +1,29 @@
-rootProject.name = "Hyssentials"
+rootProject.name = "Emberssentials"
+
 plugins {
+    // See documentation on https://scaffoldit.dev
     id("dev.scaffoldit") version "0.2.+"
 }
+
+// Would you like to do a split project?
+// Create a folder named "common", then configure details with `common { }`
+
 hytale {
-    manifest {
-        Group = "dev.hytalemodding"
-        Name = "Hyssentials"
-        Main = "dev.hytalemodding.hyssentials.HyssentialsPlugin"
-        IncludesAssetPack = true
+    usePatchline("pre-release")
+    useVersion("latest")
+
+    repositories {
+        // Any external repositories besides: MavenLocal, MavenCentral, HytaleMaven, and CurseMaven
     }
 
     dependencies {
-        compileOnly("org.jetbrains:annotations:26.0.2-1")
-        compileOnly("org.jspecify:jspecify:1.0.0")
-        runtimeOnly("com.buuz135:BetterModlist:1.+")
+        // Any external dependency you also want to include
+    }
+
+    manifest {
+        Group = "Emberfall"
+        Name = "EmberEvents"
+        Main = "dev.hytalemodding.hyssentials.Emberssentials"
+
     }
 }

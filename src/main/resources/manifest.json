@@ -1,24 +1,18 @@
 {
-    "Group": "dev.hytalemodding",
-    "Name": "Hyssentials",
-    "Version": "3.1",
-    "Description": "Essential commands for Hytale servers - TPA, homes, warps, spawn and more!",
+    "Group": "Emberfall",
+    "Name": "EmberEvents",
+    "Version": "0.1.0",
+    "Description": "Emberfall essentials",
     "Authors": [
         {
-            "Name": "Neil Revin",
-            "Email": "neil@hytalemodding.dev",
-            "Url": "https://itsneil.dev"
+            "Name": "saltt"
         }
     ],
-    "Website": "https://hytalemodding.dev",
+    "Website": "emberfall.gg",
     "DisabledByDefault": false,
-    "IncludesAssetPack": true,
-    "Dependencies": {
-        "Hytale:DamageModule": "*"
-    },
-    "OptionalDependencies": {
-        "com.leclowndu93150:ChatCustomization": "*"
-    },
-    "ServerVersion": "2026.02.18-f3b8fff95",
-    "Main": "dev.hytalemodding.hyssentials.HyssentialsPlugin"
+    "IncludesAssetPack": false,
+    "Dependencies": {},
+    "OptionalDependencies": {},
+    "ServerVersion": ">=0.5.0",
+    "Main": "dev.hytalemodding.hyssentials.Emberssentials"
 }

@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
 
-public class HyssentialsPlugin extends JavaPlugin {
+public class Emberssentials extends JavaPlugin {
     private final Config<HyssentialsConfig> config = this.withConfig("config", HyssentialsConfig.CODEC);
     private DataManager dataManager;
     private RankManager rankManager;
@@ -74,7 +74,7 @@ public class HyssentialsPlugin extends JavaPlugin {
     private JoinMessageManager joinMessageManager;
     private ScheduledExecutorService permissionScheduler;
 
-    public HyssentialsPlugin(@Nonnull JavaPluginInit init) {
+    public Emberssentials(@Nonnull JavaPluginInit init) {
         super(init);
     }
 

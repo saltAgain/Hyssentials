@@ -1,9 +1,15 @@
+
 repositories {
-    maven("https://maven.hytale-modding.info/releases")
+    // Any external repositories besides: MavenLocal, MavenCentral, HytaleMaven, and CurseMaven
 }
 
 dependencies {
-    compileOnly(files("libs/ChatCustomization-1.1.1.jar"))
+    compileOnly(libs.jetbrains.annotations)
+    compileOnly(libs.jspecify)
+
+    //shadowBundle("org.mariadb.jdbc:mariadb-java-client:3.5.3")
+    //shadowBundle("com.zaxxer:HikariCP:6.3.0")
+
     compileOnly(fileTree("libs") {
         include("*.jar")
     })
